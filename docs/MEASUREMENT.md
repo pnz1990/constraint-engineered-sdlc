@@ -67,7 +67,31 @@ belief are silent defects.
 
 ### Gate board integrity
 
-Audit for the anti-signals rather than trusting the summary:
+**First, check that every cited artifact still exists.** This is the cheapest audit available and it
+finds real rot: on a mature board, three green BUILD rows were found citing harnesses that had been
+**deleted months earlier** when an obsolete test tree was scrubbed. The rows still read
+`demonstrated`, so the board asserted a rerunnable proof that nobody could run. Nothing broke loudly,
+because a citation has no compiler.
+
+```bash
+# every script/evidence path cited in a gate row must resolve
+grep -oE '(tests|evidence|docs)/[a-zA-Z0-9_/.-]+\.(sh|py|json)' STATUS.md | sort -u \
+  | while read -r p; do [ -e "$p" ] || echo "BROKEN CITATION: $p"; done
+```
+
+Better, make it a gate of its own so it reruns forever. Two cautions learned from writing exactly
+that check:
+
+- **Judge only unambiguous rooted paths.** A first draft matched bare basenames (`results.json`) and
+  brace shorthand (`evidence/x/{a.json,b.json}`) and reported **20 broken citations on a clean
+  board**. A check that cries wolf gets disabled, and then the real defect arrives to an audience
+  trained to ignore it. Tighten the pattern; never suppress the output.
+- **A missing citation is not a missing artifact.** The same audit flagged a row whose harness existed
+  and was already running — the row just never named it. Reporting that as "no proof exists" sends
+  someone hunting for a file that was there all along. Distinguish *artifact absent* (downgrade the
+  claim) from *citation absent* (fix the row).
+
+Then audit for the anti-signals rather than trusting the summary:
 
 ```bash
 # Gates claiming green — verify each links an artifact that exists

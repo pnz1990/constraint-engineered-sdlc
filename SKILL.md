@@ -149,6 +149,14 @@ tests/           the harnesses
 proof-artifact link, and a current gap report. Declare historical sections **append-only** —
 two agents rewriting shared prose is the worst merge conflict you will hit.
 
+**Make the board's own citations a gate.** A citation is a claim, and it is the one claim nothing
+verifies: no compiler checks that a row's proof artifact still exists. On a mature board, three green
+BUILD rows were found citing harnesses **deleted months earlier** — the rows still read
+`demonstrated` while pointing at nothing. Add a check that every cited path resolves and put it in
+the regression runner; it costs a few lines and it is the difference between a board that describes
+reality and one that describes the past. See [docs/MEASUREMENT.md](docs/MEASUREMENT.md) for the
+version of this check and the two ways its first draft got it wrong.
+
 Optional but high value: do a **retrospective first**. Collect real incidents from comparable
 systems and map each to the gate that prevents its recurrence. This is what makes the gate list
 credible rather than invented, and it usually adds gates you would not have thought of.
