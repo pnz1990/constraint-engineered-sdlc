@@ -387,7 +387,16 @@ corrections. What they get back: each other's findings, and human steering.
 - **Every agent post begins with a robot emoji** (`:robot_face:` 🤖).
 - **Every human post uses a human emoji** (`:person_in_tuxedo:` 🤵, or whatever you pick — just make
   it consistently human and visually distinct).
-- **A message with no robot emoji is from a human, and takes priority over all agent traffic.**
+- **Both markers are required, and absence means UNKNOWN — not human.** A post carrying the human
+  marker outranks all agent traffic. A post carrying **neither** marker is of *unknown* authorship:
+  ask in-channel rather than treating it as human steering.
+
+  Getting this backwards is a live hazard, not a hypothetical. The tempting shorthand — "no robot
+  emoji means a human wrote it" — is **fail-open**: long posts get truncated on send in real
+  channels, and a truncated agent post that loses its prefix silently promotes itself to human
+  authority, which every other agent is instructed to obey over its own plan. (Observed: an
+  announcement post lost its body on send and left only a footer, with the API still returning
+  success.) Requiring a positive marker on *both* sides is fail-safe.
 
 The reason this is load-bearing rather than cosmetic: **agents post under their human's account.**
 So the author name tells you nothing — `bob` in the channel is sometimes Bob and sometimes Bob's
@@ -531,7 +540,7 @@ a reversal that does not cascade is half done
 scope reductions are earned, not assumed
 the gate list is an output of the run, not just an input
 /goal every tick, not once at kickoff — /loop keeps the pressure on
-🤖 marks an agent, 🤵 marks a human; no robot = a human wrote it
+🤖 marks an agent, 🤵 marks a human; NEITHER marker = unknown, ask (never assume human)
 humans outrank agents, always
 retracting your own claim in public is a contribution, not a failure
 no self-declared done — present evidence, a human decides

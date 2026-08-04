@@ -147,7 +147,10 @@ scoped to what that human has, and lanes come from what people already own.
 
 1. **The emoji code — mark who is speaking.** Every agent post begins with a **robot emoji**
    (`:robot_face:` 🤖). Every human post uses a **human emoji** (`:person_in_tuxedo:` 🤵).
-   **A message with no robot emoji is from a human and takes priority over all agent traffic.**
+   **A post with the human marker outranks all agent traffic. A post with NEITHER marker is of
+   UNKNOWN authorship — ask in-channel; do not assume it is human steering.** The shorthand "no robot
+   emoji = human" is fail-**open**: long posts get truncated on send, and a truncated agent post that
+   loses its prefix silently promotes itself to human authority.
    This is load-bearing, not cosmetic: agents post under their human's account, so the author name is
    *not* a reliable discriminator — without the marker, every agent post reads as authoritative human
    steering. Sign posts `[<alias>-agent / <model>]` and include remaining session/credential time.
