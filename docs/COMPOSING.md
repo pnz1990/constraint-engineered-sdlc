@@ -140,6 +140,45 @@ Note the seam: the board says *what must be true and how many passes it has.* Th
 command proves it.* Neither is sufficient alone — the board without the command is bookkeeping, the
 command without the board has no memory across a long run.
 
+## When step 0 declines, ask what artifact it *is* pointing at
+
+Found while applying this to a real gate, and worth naming because the first reading of step 0 sends
+you to the wrong place.
+
+`prompt-to-goal` step 0 asks whether the items interact and whether one command could produce the
+work list. If the work is greppable, it says decline — correctly, because an exit condition over a
+one-shot grep measures nothing.
+
+**But a gate is not a one-time task. It is a property that must keep holding.** So "one command
+produces the work list" does not mean *no artifact is needed*; it often means the right artifact is a
+**regression check** rather than a goal document.
+
+Worked example. A gate read "no forked code from other teams; every delta logged," tagged BUILD, with
+a markdown document recording a six-step manual audit as its proof. Step 0 on it:
+
+- *Do the items interact?* Barely — a fork can appear in the module file, in source provenance
+  comments, in an applied patch, or as a copied directory, and finding one tells you nothing about the
+  others. Leans decline.
+- *Can one command produce the work list?* Largely yes, it is greppable. Decline again.
+- *So write nothing?* **No.** The gate's own falsification condition was "any fork entry or external
+  CR resets this to red" — a standing invariant. The audit document could only ever describe one
+  moment, and would silently go stale on the next commit.
+
+The resolution: **decline the goal document, write the harness.** Four greppable checks plus a
+positive control, wired into the regression runner, discrimination-proven against four injected
+violations and one cannot-run. The gate moved from `code-verified` to `demonstrated` because there is
+now a command that re-executes.
+
+The general rule:
+
+| Step 0 says | The task is | Write |
+|---|---|---|
+| Decline — items independent, work greppable, **one-time** | A one-off fix or audit | Nothing. Do it, record the output. |
+| Decline — items independent, work greppable, **standing property** | An invariant that must keep holding | A **regression check** in the runner |
+| Proceed — items coupled | Interlocking work | A goal with a re-executing exit condition |
+
+The middle row is the one people miss, and it is where most gate rows actually land.
+
 ## Two more findings worth importing
 
 **Difficulty comes from coupling, not size.** Round 9: two 12,079-line corpora, same generator, same

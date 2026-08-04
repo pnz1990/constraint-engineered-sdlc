@@ -47,6 +47,19 @@ echo "control: instrument reads $control_count rows -- it works"
 
 # ---------------------------------------------------------------------------
 # 3. THE ACTUAL ASSERTION
+#
+#    Run this against the KNOWN-GOOD tree before you trust it. A check that
+#    reports a violation on a clean tree is worse than no check: it will be
+#    dismissed, then disabled, and the real violation it was built for arrives
+#    to an audience that has learned to ignore it.
+#
+#    When a false positive appears, TIGHTEN THE PATTERN and record the exempted
+#    near-miss in a comment. Do not add a blanket suppression -- the next real
+#    violation hides behind it. (In practice: a check for forked-code
+#    provenance matched prose describing a DESIGN lineage, "the X-vending fork
+#    of the Y idiom". The fix was requiring an explicit code-provenance phrase,
+#    with both near-misses named in the comment so a later reader does not
+#    "helpfully" loosen it again.)
 # ---------------------------------------------------------------------------
 violations="$(some-required-tool list --violating "$TARGET" 2>/dev/null | wc -l)"
 
