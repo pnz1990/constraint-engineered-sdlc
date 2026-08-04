@@ -86,16 +86,30 @@ In `AGENTS.md`, the one thing you must customize is the **autonomy boundary**. O
 about what is inside the project versus outside removes hundreds of permission round-trips. Be
 concrete: name the repos, accounts, and resources that are off-limits.
 
-### Day 1 — Start the agent
+### Day 1 — Start the agent, then set up the loop
 
-Point it at the goal:
+**First, orient it against the bar (`/goal`):**
 
 > Read `GOAL.md`, `AGENTS.md`, and `STATUS.md`. Then pick the highest-leverage gate that is not
 > green and work it. Follow the six-step cycle and write the cycle log. Do not mark anything green
 > in the cycle you build it.
 
-Then set up the loop — a recurring prompt every 10–60 minutes with the same orientation instruction.
-Any scheduler works.
+**Then set up the loop (`/loop`)** — this is the step people skip, and without it the method is a
+document rather than a run. A recurring prompt, every 10–60 minutes, that **re-orients before it
+acts**:
+
+> Sync (`git fetch`, read the channel for new messages). Re-read `GOAL.md` and `STATUS.md`. Pick the
+> highest-leverage gate that is not green and work it. Run the six-step cycle and write the cycle
+> log. Do not mark anything green in the cycle you build it. Post your findings, then report the gap.
+
+Any scheduler works — cron, your agent's own loop command, or a shell loop with a sleep. Three things
+to get right or the loop stalls unattended:
+
+- **Report remaining session/credential time in every post**, so you know when it is about to go dark.
+- **Re-read state at the start of each tick** rather than trusting in-memory context, so an
+  interrupted tick is harmless.
+- **Tell it to fall through when blocked.** The most common failure is idling on a human-gated
+  decision. The instruction that works: *"if the open items need a human, work the gaps that don't."*
 
 ### Days 2–3 — Inspect live state yourself
 
@@ -133,9 +147,41 @@ yourself reviewing every step, you have rebuilt the bottleneck.
 
 ### Adding more agents
 
-Only when one agent is genuinely the constraint. Then: one agent per human identity, assign lanes,
-set up the shared channel, and adopt the coordination protocol from `SKILL.md`. Have the agents
-append what they learn to `AGENTS.md` — that is intended.
+Only when one agent is genuinely the constraint. The setup is a team structure, not a worker pool:
+
+**1. One agent per real person.** Each agent runs under a specific human's identity — `alice-agent`,
+`bob-agent` — inheriting that person's access, workspace, and ownership lane. This is what keeps
+accountability on a human, scopes permissions without inventing a new authorization model, and makes
+lanes fall out of what people already own (platform, product, operations, review).
+
+**2. One shared Slack channel as the working memory.** Not a status feed. Agents read it at the top of
+every tick and post intent, file claims, review links, findings, and corrections. A `git fetch`
+catches new commits; only re-reading the channel catches a claim or a human redirect that arrived
+without one.
+
+**3. Set the emoji code on day one.** This is the highest-leverage line in the protocol:
+
+- Agent posts begin with a **robot emoji** 🤖 (`:robot_face:`).
+- Human posts use a **human emoji** 🤵 (`:person_in_tuxedo:`).
+- **No robot emoji ⇒ a human wrote it ⇒ it outranks all agent traffic.**
+
+It is load-bearing because agents post *under their human's account*, so the author name discriminates
+nothing — `bob` is sometimes Bob and sometimes Bob's agent. Without the marker, agents defer to each
+other's output as though a human had said it. Have agents also sign `[bob-agent / <model>]` and report
+remaining session time.
+
+**4. State that humans outrank agents, absolutely.** A human message beats any agent post, any
+rulebook line, and the agent's own plan. Pair it with a judgment-based escalation bar so it does not
+become reflexive — interrupt a human for one-way doors, taste, working-agreement changes, and
+cross-lane collisions; handle the rest yourself.
+
+**5. Make public self-correction expected.** A post that says "my earlier claim was wrong, here is the
+real root cause" is the most valuable traffic in the channel. In a parallel fleet, a stale claim left
+standing is a defect other agents will build on.
+
+**6. Let the agents write the protocol.** Seed `AGENTS.md`, then let them append lessons from their own
+sessions. Most of the reference run's rulebook was written this way — including the file-claiming rule
+itself, added after two agents collided on one file. That is intended, not drift.
 
 ---
 

@@ -50,11 +50,22 @@ Six mechanisms, described in full in [SKILL.md](SKILL.md):
    plus a falsification condition. No silent downgrades.
 3. **An evidence ladder** — `assumed → documented → code-verified → demonstrated` — with confidence
    that must be justified by evidence level and drops the moment a crack appears.
-4. **A six-step self-correction cycle** with three adversarial lenses turned on the agent's *own*
-   output, plus a reversal ledger where every overturned belief cascades to its dependents.
+4. **A six-step self-correction cycle**, driven by two primitives — **`/goal`** (re-orient against
+   the bar every tick) and **`/loop`** (keep grinding autonomously for hours) — with three
+   adversarial lenses turned on the agent's *own* output, plus a reversal ledger where every
+   overturned belief cascades to its dependents.
 5. **Two consecutive clean passes to go green**, the second by a *different* agent on its own
    checkout. This is the rule most often quietly skipped.
-6. **A file-level coordination protocol** for multiple agents on one codebase.
+6. **Agents as team members**: each running under a real person's identity, coordinating in Slack,
+   with a 🤖/🤵 emoji code marking who is speaking and humans outranking agents absolutely.
+
+The two primitives are what turn the document into a run — and neither works alone:
+
+```
+/goal without /loop   →  a good bar nobody grinds against. One session, then it stops.
+/loop without /goal   →  tireless motion with no bar. Drifts, repeats, declares done.
+/goal + /loop         →  sustained pressure against an unfalsifiable bar.
+```
 
 If you keep only two things:
 

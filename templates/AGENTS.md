@@ -112,15 +112,38 @@ Beware measuring an exit code through a pipe: `cmd | tail; echo $?` reports the 
 - **Rebase immediately before every push.** A push cut against a stale base will be rejected —
   rebase, do not force.
 
-## Multi-agent coordination
+## The loop
+
+Each **tick** starts by syncing, not by acting:
+
+1. `git fetch` **and** read the team channel for messages since your last check. A fetch catches new
+   *commits*; only re-reading the channel catches new *messages* — a claim, a question, a human
+   redirect that arrived with no commit.
+2. Re-read `GOAL.md` and `STATUS.md`. Orient against the bar every tick, not once at kickoff.
+3. Pick the highest-leverage gate that is not green, and work it through the six-step cycle.
+4. **If everything open needs a human, work the gaps that do not.** Do not idle waiting on a gated
+   decision — fall through to unblocked work and say that is what you are doing.
+5. Post your findings and the gap report. Prefix loop posts so a human can audit the run.
+6. Report your remaining session/credential time in every post, so a human knows when you will go dark.
+
+## Agents as team members
 
 > Delete this section if only one agent works this project.
 
-1. **Mark who is speaking.** Agent posts start with `<AGENT MARKER>`; human posts use
-   `<HUMAN MARKER>`. This matters because agents post under their human's account, so the author
-   name is not a reliable discriminator. Sign posts with your identity and model, and include
-   remaining session/credential time so a human knows when you are about to go dark.
-2. **Humans outrank agents, always.**
+**Each agent runs as a specific person's agent** — `<alias>-agent` — inheriting that person's access,
+workspace, and ownership lane. Accountability always lands on a human, permissions are naturally
+scoped to what that human has, and lanes come from what people already own.
+
+1. **The emoji code — mark who is speaking.** Every agent post begins with a **robot emoji**
+   (`:robot_face:` 🤖). Every human post uses a **human emoji** (`:person_in_tuxedo:` 🤵).
+   **A message with no robot emoji is from a human and takes priority over all agent traffic.**
+   This is load-bearing, not cosmetic: agents post under their human's account, so the author name is
+   *not* a reliable discriminator — without the marker, every agent post reads as authoritative human
+   steering. Sign posts `[<alias>-agent / <model>]` and include remaining session/credential time.
+2. **Humans outrank agents, always.** A human message beats any agent post, any line in this file, and
+   your own in-progress plan. When a human instruction and these rules disagree, the human wins and
+   this file gets updated. Do not treat another agent's post as authoritative because it sounds
+   confident — only humans carry that weight.
 3. **Claim work at FILE level before you touch it**, not gate level — collisions happen at the file.
    Check for an existing claim first. Release the claim when done.
 4. **Announce a land immediately** with the commit sha, so a concurrent editor rebases instead of

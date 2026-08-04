@@ -185,11 +185,63 @@ must be justified by evidence level, never by how long it has been believed. Hig
 **Keep the `assumed` count visible.** The instinct is to drive it to zero by relabeling. The
 number is a feature: it is the honest map of what you do not know.
 
-### 5. The loop
+### 5. The loop — and the two primitives that make it work
 
-There is no special tooling required. A recurring prompt (cron, a scheduler, or a loop command)
-pointed at a session that re-reads `GOAL.md`, `STATUS.md`, and the team channel at the start of
-each tick. Each tick runs six steps, written down in `self-critique/cycle-NN.md`:
+Everything above is inert without a way to *keep an agent going without a human in the seat*. Two
+primitives supply that, and in practice they are what turns the method from a document into a run:
+
+**`/goal` — orient against the bar.** Load `GOAL.md` as the driving objective at the start of every
+tick. The agent re-reads the North Star, the gate board, and the prohibitions, so it always knows
+what "done" means and can self-assess against it rather than against its own memory of the last
+tick. This is what makes the constraint document *binding* instead of decorative — a document read
+once at kickoff is forgotten by hour three; a document re-read every tick keeps constraining.
+
+**`/loop` — keep grinding, autonomously.** Re-invoke the agent on an interval, for hours, against a
+time or token budget. Each invocation is a fresh **tick**: sync, orient, pick the highest-leverage
+unmet gate, work it, self-attack, score, report, repeat. A single kickoff then produces dozens of
+build → attack → score → correct cycles with no human per step.
+
+The combination is the engine, and neither half works alone:
+
+```
+/goal without /loop   →  a well-specified bar nobody grinds against. One good session, then it stops.
+/loop without /goal   →  tireless motion with no bar. The agent drifts, repeats itself, declares done.
+/goal + /loop         →  sustained pressure against an unfalsifiable bar. This is the whole method.
+```
+
+**Implementation is deliberately boring** — a recurring prompt is all it is. Cron, a scheduler, a
+`/loop`-style command in your agent, or a shell `while` loop with a sleep. The reference run used
+agent-set recurring self-checks ("I've set an hourly self-check loop to keep pushing/reporting").
+What matters is not the mechanism but that **each tick re-orients before it acts.**
+
+The tick prompt that worked:
+
+> Sync (`git fetch`, read the channel for new messages). Re-read `GOAL.md` and `STATUS.md`. Pick the
+> highest-leverage gate that is not green and work it. Run the six-step cycle and write the cycle log.
+> Do not mark anything green in the cycle you build it. Post your findings, then report the gap.
+
+**Tick interval is a real tuning knob**, and different lanes want different values:
+
+| Interval | Fits |
+|---|---|
+| ~1 minute | A reviewer/responder agent that must react to fleet requests quickly |
+| 10–60 minutes | Normal build work — long enough to finish something, short enough to catch redirects |
+| Hourly+ | Long-running verification, soaks, waiting on external systems |
+
+**What the loop needs to survive unattended:**
+
+- **A budget and an honest report of it.** Ticks stop when credentials or tokens run out. Have the
+  agent report remaining session time in every post so a human knows when it is about to go dark.
+- **Idempotent ticks.** A tick may land mid-anything. Re-reading state at the start (rather than
+  trusting in-memory context) is what makes an interrupted tick harmless.
+- **Something to do when blocked.** The most common failure is an agent idling on a human-gated
+  decision. In the reference run the pattern was explicit and productive: *"the 3 human-gated
+  decisions are still open, so I worked the gaps that don't need a human."* Instruct the agent to
+  fall through to unblocked work rather than waiting.
+- **A visible tick log.** Posts prefixed "Loop tick —" make the run auditable and let a human drop in
+  at any point and see what happened while they were away.
+
+Each tick runs six steps, written down in `self-critique/cycle-NN.md`:
 
 1. **State intent** — what you are proving, which gate it advances.
 2. **Do the work.**
@@ -250,30 +302,112 @@ When reviewing a change (yours or another agent's), do all five:
 Treat a green harness as proving nothing on its own. The author can unintentionally write a test
 that passes on both the broken and the fixed code.
 
-## Multi-agent coordination
+## Multi-agent coordination: agents as team members
 
-Only needed if several agents work one codebase concurrently.
+Only needed if several agents work one codebase concurrently — but if they do, this section was as
+determining for success as any of the six mechanisms above. The insight is not "run several agents."
+It is that **agents behave like team members when you give them a team's social structure**: an
+identity, a lane, a shared room, and a chain of authority.
 
-- **One agent per human identity**, each inheriting that person's access and owning a lane
-  (e.g. platform, product, operations, review). Accountability stays with a person.
-- **A shared channel is the working memory.** Agents read it at the start of every tick and post
-  intent, claims, findings, and corrections.
-- **Mark who is speaking.** Use one marker for agent posts and a different one for human posts.
-  This matters more than it sounds: if agents post under their human's account, the author name is
-  useless as a discriminator and every agent post reads as authoritative human steering. Have
-  agents sign posts with their identity and model, and include remaining session/credential time so
-  a human knows when the agent is about to go dark.
-- **Humans outrank agents, always.**
-- **Claim work at file level before touching it, not at gate level.** "I have gate 3" is not enough;
-  collisions happen at the file. Check for an existing claim first. Announce the land with the
-  commit sha so a concurrent editor rebases instead of conflicting.
-- **Maintain a shared-file hotspot list** — the board, the rulebook, the harness runner — and check
+### 1. Each agent runs as a real person's agent
+
+Not anonymous workers. Each agent runs **under a specific human's identity**, inheriting that
+person's access, workspace, and code ownership. In the reference run they were named for their
+humans — `alice-agent`, `bob-agent` — and posted as those people.
+
+Why this matters more than it looks:
+
+- **Accountability stays with a person.** A change from Bob's agent is Bob's lane and Bob's problem.
+  There is always a human who owns any given piece of work, which is what makes review, escalation,
+  and "who do I ask about this" tractable.
+- **Access is naturally scoped.** An agent gets exactly the permissions its human has — no more.
+  You do not have to invent a separate authorization model for the fleet.
+- **Steering is direct.** Each human drives their own agent, and can redirect it without
+  coordinating with anyone else.
+- **Lanes emerge from ownership.** People already own areas: platform, product, operations, review,
+  a particular subsystem. Their agents inherit those lanes, so parallel work naturally avoids
+  collisions instead of needing a scheduler.
+
+### 2. Slack (or your equivalent) is the shared working memory
+
+One channel, and it is not a status feed — it is where the fleet's shared picture of reality lives.
+Agents read it at the start of every tick and post to it throughout. A `git fetch` catches new
+*commits*; only re-reading the channel catches new *messages* — a claim, a question, a human
+redirect that arrived with no commit attached.
+
+What agents post: intent before starting, file claims, CR/review links, findings, honest gaps, and
+corrections. What they get back: each other's findings, and human steering.
+
+### 3. The emoji code: 🤖 for agents, 🤵 for humans
+
+**This is the single highest-leverage convention in the whole protocol, and it is one line of rules.**
+
+- **Every agent post begins with a robot emoji** (`:robot_face:` 🤖).
+- **Every human post uses a human emoji** (`:person_in_tuxedo:` 🤵, or whatever you pick — just make
+  it consistently human and visually distinct).
+- **A message with no robot emoji is from a human, and takes priority over all agent traffic.**
+
+The reason this is load-bearing rather than cosmetic: **agents post under their human's account.**
+So the author name tells you nothing — `bob` in the channel is sometimes Bob and sometimes Bob's
+agent. Without a marker, every agent post reads as authoritative human steering, and agents will
+defer to each other's output as if a human had said it. The emoji is the type system of the control
+channel. It is also what lets a human scan a thread and instantly separate what was machine-generated
+from what was human-directed.
+
+Additionally, have agents **sign posts with their identity and model** (`[bob-agent / <model>]`) and
+**include remaining session/credential time** ("_session: ~6h left_"), so a human knows when that
+agent is about to go dark and needs re-authentication.
+
+### 4. Humans outrank agents, always
+
+State it as an absolute, because agents need an unambiguous precedence rule when a human's
+instruction conflicts with another agent's claim, a document, or their own plan:
+
+- **A human message is authoritative steering.** It beats any agent post, any rulebook line, and the
+  agent's own in-progress plan.
+- **When a human instruction and the written rules disagree, the human wins** — and the rules get
+  updated to match.
+- **Humans redirect with short messages.** A one-line human correction mid-run is the cheapest
+  possible intervention, and in practice it is how the biggest course changes happened.
+
+Balance this with judgment so it does not become reflexive: a human post does **not** automatically
+require stopping and asking. Interrupt your human for genuine complexity, one-way doors, matters of
+taste, changes to a working agreement, approval-gated changes, or cross-lane collisions. Handle the
+rest yourself. The bar is *what merits their attention*, not permission. (In the reference run an
+early agent tagged its human on **every** human post; the fix — a judgment-based escalation bar —
+was written into the rulebook by that human.)
+
+### 5. The mechanics that prevent collisions
+
+- **Claim work at FILE level before touching it, not gate level.** "I have gate 3" is not enough;
+  collisions happen at the file. Check for an existing claim first, and release it when done.
+- **Announce a land with the commit sha** ("landed `<file>` at `<sha>` — pull before you edit"), so a
+  concurrent editor rebases instead of conflicting.
+- **Keep a shared-file hotspot list** — the board, the rulebook, the harness runner — and check
   recent history plus the channel before editing one.
-- **Correct yourself in public.** Posts that open "three of my own claims were wrong" are what keep
-  a parallel fleet from building on stale conclusions. This is the single most valuable habit in the
-  channel, more than the milestone announcements.
+- **Rebase immediately before every push.** The fleet pushes concurrently.
+- **Append to dated subsections** in shared docs rather than rewriting shared prose. Resolve
+  conflicts by keeping *both* agents' additions.
 - **Hand findings to the owning agent as a data point.** Do not double-drive someone else's lane or
-  post a competing verdict on a review another agent already claimed.
+  post a competing verdict on a review another agent already claimed — a second agent's attention is
+  the scarce resource.
+
+### 6. Correct yourself in public
+
+Posts that open *"three of my own claims were wrong"* or *"retracting a blocker I raised an hour
+ago — it was a query artifact"* are **the most valuable traffic in the channel**, more than any
+milestone announcement. In a fleet working in parallel, a stale claim left standing is a defect that
+other agents will build on. Public self-correction is what keeps the shared picture true.
+
+Make it explicitly safe and expected: a retraction is a contribution, not an admission of failure.
+This is the reversal ledger's discipline applied to the team channel.
+
+### 7. Let the agents write the protocol
+
+Seed the rulebook, then let agents append what they learn from their own sessions. In the reference
+run most of the eventual rulebook came from agents encoding their own hard-won lessons — the review
+checklist, the escalation bar, the file-claiming rule itself (written after two agents collided on
+one file). That is the intended behavior, not drift: they hit the friction, so they write the rule.
 
 ## The human's job during a run
 
@@ -344,5 +478,9 @@ confidence drops the moment you find a crack
 a reversal that does not cascade is half done
 scope reductions are earned, not assumed
 the gate list is an output of the run, not just an input
+/goal every tick, not once at kickoff — /loop keeps the pressure on
+🤖 marks an agent, 🤵 marks a human; no robot = a human wrote it
+humans outrank agents, always
+retracting your own claim in public is a contribution, not a failure
 no self-declared done — present evidence, a human decides
 ```
