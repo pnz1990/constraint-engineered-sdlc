@@ -39,6 +39,36 @@ Examples of the same bug wearing different clothes:
 Every mechanism below is aimed at this. If you keep only one thing from this skill, keep
 **cannot-run is a third outcome, never a pass** and **a new test must fail on the old code.**
 
+## Two scopes, two skills
+
+This skill governs **the run**: an open-ended, long-horizon build where you do not yet know the
+endpoint. Its product is as much *the discovery of which properties matter* as the code — which is why
+it has a reversal ledger and why its gate list is expected to change.
+
+It pairs with **[`prompt-to-goal`](https://github.com/pnz1990/ai-epistemic-constraints)**, which
+governs **a gate**: one bounded task, where the exit condition can be written as a command whose
+output a script re-runs. That skill's effect is measured; this one's is not.
+
+```
+THE RUN   (this skill)          days–weeks   endpoint unknown, gate list evolves
+   └─ THE GATE (prompt-to-goal)  hours       endpoint known, exit condition re-executes
+```
+
+The seam is exact: a gate reaches this skill's **`demonstrated`** level precisely when it has
+`prompt-to-goal`'s **re-executing exit condition.**
+
+Two rules that follow, and getting them backwards is the common mistake:
+
+- **Do not** run `prompt-to-goal`'s step-0 trial against the whole project. There is no bounded slice
+  of a five-day build whose outcome tells you whether to write the constraint document, and you cannot
+  A/B a long run against yourself. The constraint document is a different genre — prohibitions and an
+  exit gate, not a machine-evaluable predicate.
+- **Do** run it against every individual gate. There the trial is cheap and real, and it will tell you
+  to skip the ceremony most of the time. Declining is the common correct answer.
+
+Full treatment, including the controlled-comparison result that makes this composition load-bearing:
+[docs/COMPOSING.md](docs/COMPOSING.md).
+
 ## Setup: the six mechanisms
 
 Work through these in order. Steps 1–3 are human work and come before any agent builds anything.
@@ -57,6 +87,15 @@ This document is the product. Everything else derives from it. Create `GOAL.md`:
     behavior, failure isolation between tenants/users, authorization and credential scoping,
     deployment safety and rollback, upgrade and migration, dependency ordering and teardown,
     capacity limits, cost, observability, reproducibility by a stranger.
+  - **Prioritize gates over *interacting* properties.** Difficulty comes from coupling, not size: in
+    a controlled comparison, chaining defects so that fixing one leaves the property violated dropped
+    scores from 80.4% to 19.2%, while corpus size barely mattered. A gate over a big pile of
+    independent items is easy and proves little, however impressive the row count.
+
+  **Expect this list to be wrong.** You are writing it before you understand the problem, which is
+  unavoidable — the gate list is an output of the run as much as an input to it. Gates will be added,
+  reworded, and found unfalsifiable. Log every such revision in the reversal ledger. A gate list that
+  never changed is a sign nobody learned anything.
 - **The prohibition list, enumerated by name.** This is the highest-value paragraph in the file.
   Say outright that the agent is prone to stopping early, and name the specific exits:
   - No self-declared done.
@@ -130,6 +169,14 @@ Every material claim carries a tag. Untagged assertions get bounced in review.
 A BUILD gate is not green below `demonstrated`. A DESIGN gate is not green below `code-verified`
 or `documented` **plus an explicit falsification condition** — what would have to be true for this
 to be wrong.
+
+**`demonstrated` has a specific meaning: a command, plus the output it produced, that someone else
+re-runs and compares.** Not "a harness exists." Not "the artifact is present." This distinction is
+the difference between the two arms of a controlled comparison, where an exit condition that only
+counted deliverables scored *worse than no gate at all* while one that re-executed evidence beat the
+baseline by a clear margin. A gate board is structurally a counting predicate; what rescues it is
+that every row's artifact re-executes. See [docs/COMPOSING.md](docs/COMPOSING.md) — this is what the
+companion skill `prompt-to-goal` is for, and it is not optional.
 
 Also track **confidence**: the honest probability the claim survives the next attack. Confidence
 must be justified by evidence level, never by how long it has been believed. High confidence on
@@ -291,9 +338,11 @@ Print this and stick it on the wall:
 ```
 cannot-run is a third outcome, never a pass
 a new test must FAIL on the old code
+a proof artifact RE-EXECUTES; if it only counts, it is worse than nothing
 the second pass is a different agent, on its own checkout
 confidence drops the moment you find a crack
 a reversal that does not cascade is half done
 scope reductions are earned, not assumed
+the gate list is an output of the run, not just an input
 no self-declared done — present evidence, a human decides
 ```

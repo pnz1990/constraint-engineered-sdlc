@@ -70,6 +70,15 @@ pass can be luck or a weak attack. Any new crack resets the counter.
 > Prioritize gates over INTERACTING properties (isolation, ordering, teardown, credential scoping
 > across a trust chain). Coupling is what makes a task hard — a gate over a big pile of independent
 > items is easy and proves little.
+>
+> THIS LIST WILL BE WRONG. You are writing it before you understand the problem, which is
+> unavoidable: the gate list is an output of the run as much as an input to it. Gates get added,
+> reworded, and found unfalsifiable. Log every revision in the reversal ledger. A gate list that
+> never changed means nobody learned anything.
+>
+> When an agent picks up an individual gate, that is the moment to run `prompt-to-goal` step 0 on it
+> (trial the plain imperative; usually decline; if it survives, write a re-executing exit condition).
+> Do NOT run step 0 against this document as a whole — a multi-week build has no trialable slice.
 
 You are done only when every row is green with a linked proof artifact and `STATUS.md` shows no red
 rows. Missing any single row means you keep building.

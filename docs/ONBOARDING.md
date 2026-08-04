@@ -54,11 +54,23 @@ does not satisfy this") does.
 
 **3. Draft the gate list.** 15–35 rows. For each one write the *proof artifact you would accept*
 before you write the gate description — if you cannot name the artifact, the gate is unfalsifiable
-and needs rewording.
+and needs rewording. The artifact is a **command plus its output**, not a file that exists.
+
+Favor gates over *interacting* properties (isolation, ordering, teardown, credential chains). Coupling
+is what makes a task hard; a gate over many independent items is easy and proves little.
+
+Accept up front that this list will be wrong. You are writing it before you understand the problem.
+Gates get added, reworded, and discovered unfalsifiable — log each revision in the reversal ledger.
+A gate list that never changed means nobody learned anything.
 
 Optional, high value: run the retrospective first. Pull real incidents from comparable systems,
 map each to the gate that prevents its recurrence. This usually adds gates you would not have
 thought of, and it makes the list defensible.
+
+**Do not run `prompt-to-goal` against the project as a whole.** Its step-0 trial ("run the plain
+imperative on a bounded slice and let the result overrule you") cannot be executed on a multi-week
+build — there is no slice whose outcome tells you whether to write this document. That skill enters
+later, per gate, at step 5 below.
 
 **4. Create the skeleton and the rulebook.**
 
@@ -96,6 +108,23 @@ plain unmanaged one. The gate board was green through both. Agent rigor cannot c
 foundation; only someone looking at the real thing can.
 
 Do it again around the halfway mark.
+
+### Per gate — Decide whether it needs a formal goal
+
+Each time an agent picks up a gate, run [`prompt-to-goal`](https://github.com/pnz1990/ai-epistemic-constraints)
+step 0 **on that gate**:
+
+1. **Trial the plain imperative** on a bounded slice of the gate. If it comes back clean, write no
+   goal — just do the work and record the artifact. **This declines most of the time, and declining is
+   correct**, not a failure to engage.
+2. **If it survives the trial** — the gate is over coupled properties where fixing one site leaves
+   another wrong — write the goal with `evidence_command` / `evidence_output` per row and a checker
+   that re-executes them.
+3. **Record the outcome on the board:** evidence level, pass counter, and a link to the artifact that
+   re-runs.
+
+This is what keeps the method from becoming ceremony. The heavy machinery goes on the coupled,
+high-cost-of-being-wrong gates and nowhere else.
 
 ### Ongoing — Stay out of the loop
 

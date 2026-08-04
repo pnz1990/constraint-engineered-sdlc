@@ -5,9 +5,19 @@ list. Ships as a [Claude Code](https://docs.claude.com/en/docs/claude-code) skil
 are process — they work with any agent, or with none.
 
 **Companion skill:** [ai-epistemic-constraints](https://github.com/pnz1990/ai-epistemic-constraints)
-converts a single imperative prompt into a verifiable declarative goal. This repo is the process
-around it. See [docs/COMPOSING.md](docs/COMPOSING.md) — including a finding there that constrains
-how you should write gates here.
+ships `prompt-to-goal`, which turns one imperative prompt into a goal whose exit condition a script
+re-executes. **Use both.** They cover different scopes, and each repairs the other's weak point:
+
+```
+THE RUN   (this repo)            days–weeks   endpoint unknown, gate list evolves, unmeasurable
+   └─ THE GATE (prompt-to-goal)   hours       endpoint known, exit condition re-executes, measured
+```
+
+The run discovers *what the gates are*; `prompt-to-goal` proves *an individual gate*. Discovery can't
+be trial-controlled — you don't know the endpoint yet, which is what the reversal ledger is for. Proof
+can be, and must be, because a gate board left alone is just bookkeeping. Full treatment, including
+the controlled result that makes this pairing load-bearing rather than optional:
+[docs/COMPOSING.md](docs/COMPOSING.md).
 
 ---
 
@@ -113,16 +123,25 @@ building the same thing conventionally. The estimate in the denominator is an es
 defend is narrower and more useful: specific defects were caught by specific mechanisms, and those
 mechanisms are described here so you can try them.
 
-The companion repo, [ai-epistemic-constraints](https://github.com/pnz1990/ai-epistemic-constraints),
-is held to a much higher evidentiary standard — pre-registered trials, published raw output, void
-rounds honored, and every original accuracy claim refuted by its own testing. One of its findings
-directly constrains this repo: **a gate that only counts artifacts measured *worse* than no gate at
-all.** If your gates can be satisfied without executing anything, you have built the arm that
-underperformed. [docs/COMPOSING.md](docs/COMPOSING.md) explains what to do about it.
+The companion repo is held to a much higher evidentiary standard — pre-registered trials, published
+raw output, void rounds honored when their own gates fired, and every original accuracy claim refuted
+by its own testing. One of its findings directly constrains this repo: **a gate that only counts
+artifacts measured *worse* than no gate at all.** If your gates can be satisfied without executing
+anything, you have built the arm that underperformed. That is precisely why the two skills belong
+together, and [docs/COMPOSING.md](docs/COMPOSING.md) explains the fix.
 
-Applying this method's own standard to itself: the mechanisms are `demonstrated` (they ran, and caught
-things). The efficiency claim is `assumed`. Stated plainly rather than dressed up — which is the whole
-point.
+Applying the evidence ladder to the two skills themselves:
+
+| Claim | Level |
+|---|---|
+| A re-executing exit condition beats a bare prompt on a coupled task | `demonstrated` |
+| A counting-only exit condition is worse than no gate at all | `demonstrated` |
+| Coupling, not size, is what makes a task hard | `demonstrated` |
+| These six process mechanisms catch real defects | `demonstrated` — they ran; defects trace to them |
+| The process compresses a long build by roughly an order of magnitude | **`assumed`** — one run, no control arm |
+
+Keep that last row visible. Use the open-ended run because the *shape* is right for discovery work,
+and use the inner skill because its *effect* is measured. Do not claim the outer number.
 
 ## What it costs
 

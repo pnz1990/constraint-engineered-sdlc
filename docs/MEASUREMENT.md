@@ -27,6 +27,14 @@ working deployment pipeline, and a live multi-tenant deployment, in N active day
 
 All of these come from the repo itself, so they are cheap and hard to fake.
 
+> **Read this first, because it undercuts everything below.** Every metric in this section is
+> *bookkeeping* — counts of tags, gates, and reversals. A controlled comparison found that an exit
+> condition which only counts deliverables scored **worse than no gate at all**, while one that
+> re-executed evidence beat the baseline. So these numbers are diagnostic, not causal: use them to
+> catch relabeling and stalls, never as evidence that the work is good. The thing that makes the work
+> good is that each artifact re-runs. Spot-check by rerunning three of them, every time you read this
+> board. See [COMPOSING.md](COMPOSING.md).
+
 ### Evidence movement
 
 The core question: are claims climbing the ladder, or just accumulating?

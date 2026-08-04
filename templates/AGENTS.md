@@ -37,10 +37,24 @@ human approval before it lands, not just agent review:
 - Isolation between tenants or users
 - <project-specific invariants>
 
+## Method: two scopes, two skills
+
+Do not use one where the other belongs.
+
+- **The run** — gate board, evidence ladder, cycle loop, review discipline:
+  `constraint-engineered-sdlc`. The gate list is expected to be wrong at first and to be revised;
+  log every revision in the reversal ledger.
+- **A gate** — writing an individual gate's exit condition: `prompt-to-goal`.
+  - Run its step-0 trial on the gate first. **Declining is usually correct.**
+  - No exit condition that merely counts. It must **re-execute**.
+  - Do NOT run step 0 against the project as a whole — it is not a trialable task.
+
 ## Evidence discipline
 
 - **Every material claim carries a tag:** `assumed` / `documented` / `code-verified` /
   `demonstrated`. Untagged assertions get bounced in review.
+- **`demonstrated` means a command plus its output that someone else re-runs and compares** — not
+  "a harness exists." A gate satisfiable without executing anything is bookkeeping.
 - **A gate is green only with a rerunnable proof artifact** and **two consecutive clean adversarial
   passes**, the second by a *different* agent on its *own* checkout. Any new crack resets the counter.
 - **No self-declared done.** Present the gate table; a human decides.
