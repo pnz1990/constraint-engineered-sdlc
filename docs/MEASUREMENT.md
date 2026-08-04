@@ -97,14 +97,31 @@ Track over time: **PASS / FAIL / CANNOT-RUN counts per run.** A rising cannot-ru
 decay; it is often the harness becoming more honest about what it never actually verified. Report
 it as such rather than hiding it.
 
-### Human leverage
+### Human leverage: interventions per session, not message share
 
-If you use a shared channel, the ratio of human to agent messages is a direct proxy for leverage.
-In the reference run: **55 human posts out of 610 (9%)**.
+The obvious metric is the ratio of human to agent messages. In the reference run: **55 human posts
+out of 610 (9%)**.
 
-Interpretation matters here. Low human share is only good if quality holds — 2% human involvement
-with a board full of unverified greens is worse than 20% with real ones. Read it alongside evidence
-movement, never alone.
+**Prefer interventions per session, paired with an outcome.** Anthropic's
+[agent-autonomy analysis](https://www.anthropic.com/research/measuring-agent-autonomy) reports
+internal usage where interventions per session fell **5.4 → 3.3 while success on the hardest tasks
+doubled**. That pairing is the real signal: oversight cost down *and* outcome up. Message share alone
+can drop for the worst reason — a human who stopped paying attention.
+
+Also worth tracking, because the same analysis found experienced users do not reduce oversight so much
+as **relocate** it: auto-approve rose from ~20% of sessions for newer users to over 40% by ~750
+sessions, while interrupt rate *also* rose (~5% → ~9% of turns). Approve less, watch more. If your
+auto-approve rate climbs and your interrupt rate falls to zero, you are not more efficient; you have
+stopped supervising.
+
+**Agent-initiated stops are a healthy signal, not a failure.** On the most complex work, that analysis
+found agents ask for clarification more than twice as often as humans interrupt — most often to choose
+between approaches (35%), gather diagnostics (21%), clarify a vague request (13%), or request
+credentials (12%). A loop that never stops to ask is more suspicious than one that stops often.
+
+Interpretation caveat: low human share is only good if quality holds. 2% human involvement with a
+board full of unverified greens is worse than 20% with real ones. Read it alongside evidence movement,
+never alone.
 
 ### Defect provenance
 
@@ -123,6 +140,48 @@ them.
 
 Do this at least once with a genuinely independent person. Self-reproduction proves that your
 machine works.
+
+## Running a control arm on a single gate
+
+You cannot A/B a multi-week run against itself. **You can A/B one gate**, and the method comes from
+Thoughtworks' [refactoring economics experiment](https://martinfowler.com/articles/exploring-gen-ai/refactoring-economic-benefit.html).
+
+The enabling insight is that **agents are stateless, so an identical prompt replays cleanly.** In the
+author's words: *"Precisely because agents never learn this was now possible to run as an experiment."*
+Statelessness is usually a limitation; here it is what makes a controlled comparison possible at all.
+
+The loop:
+
+```
+1. Define ONE representative task, phrased identically every time.
+2. Measure a baseline: run it in a throwaway/sub-agent context. Record cost, time, outcome. DISCARD the work.
+3. Apply one change (a refactor, a rule, a goal, a harness).
+4. Re-run the SAME prompt in a fresh context. Record. DISCARD.
+5. Repeat, one variable at a time.
+```
+
+Use it to answer questions this method otherwise only asserts:
+
+- Does adding a re-executing exit condition to this gate change the outcome versus a bare prompt?
+  (This is `prompt-to-goal`'s step-0 trial, formalized.)
+- Does the rulebook change reduce the intervention count on a representative task?
+- Is this refactor worth its cost in future work on this area?
+
+Two disciplines borrowed from that experiment:
+
+**Report the effect size honestly, including when it is small.** Its input tokens per change fell 83%
+(159,564 → 27,360) — which the author priced at **39.7 cents** and called, in his own words, "Not a
+lot." A large percentage on a small base is a small result. Say so.
+
+**State the mechanism as a falsifiable prediction, then test it.** He claimed the saving came from the
+agent *reading less*, not from less code existing — total code barely moved — which predicts that
+arbitrary file-splitting would *not* help. The data matched: tokens stayed flat until the largest file
+began shrinking. A measured improvement with an untested mechanism is a coincidence you have not ruled
+out yet.
+
+A caution from the same source, in the same spirit as this whole document: his token counts had to be
+approximated (characters ÷ 4) because live counting was unreliable "despite showing token counts...
+and **billing** for tokens." Verify your instrument before you trust its numbers.
 
 ## A worked scoreboard
 

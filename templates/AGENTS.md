@@ -86,7 +86,9 @@ on both the broken and the fixed code. When you review, do all five:
    stronger or stay the same, never loosened to pass.
 3. **Rerun on your own checkout/environment**, not the author's. Environment divergence has
    repeatedly surfaced real bugs a same-machine rerun masked.
-4. **Probe one edge the author's tests did not**, and confirm the fix holds there too.
+4. **Probe one edge the author's tests did not — structurally unlike theirs**, not one more case of
+   the same shape. Vary the *kind* of input (a different call path, lifecycle stage, or failure mode),
+   not the value. A suite written against the cases its author imagined is brittle just outside them.
 5. **Do not defer to a claim.** A proposal, a status line, or another agent's "verified" is a
    *hypothesis to verify*, not a fact. Pull the actual code. A well-tested change in the wrong
    direction is still wrong. If you cannot verify it, say so explicitly and treat it as unverified —

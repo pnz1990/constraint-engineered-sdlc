@@ -96,8 +96,9 @@ This document is the product. Everything else derives from it. Create `GOAL.md`:
   unavoidable — the gate list is an output of the run as much as an input to it. Gates will be added,
   reworded, and found unfalsifiable. Log every such revision in the reversal ledger. A gate list that
   never changed is a sign nobody learned anything.
-- **The prohibition list, enumerated by name.** This is the highest-value paragraph in the file.
-  Say outright that the agent is prone to stopping early, and name the specific exits:
+- **The prohibition list, enumerated by name — each with its reason attached.** This is the
+  highest-value paragraph in the file. Say outright that the agent is prone to stopping early, and
+  name the specific exits:
   - No self-declared done.
   - No gate is green without a proof artifact.
   - Naming these cheap exits: one component working while the rest are only described; "documented"
@@ -107,6 +108,22 @@ This document is the product. Everything else derives from it. Create `GOAL.md`:
     proving why it must be DESIGN instead of BUILD. Convenience is not evidence.
   - A late discovery that invalidates an early decision outranks a tidy plan. Reopen it.
   - Momentum is not evidence. Being deep into the build is not a reason to keep a shaky decision.
+
+  **State the purpose behind each prohibition, not only the prohibition.** An enumerated list covers
+  exactly the cases it enumerates; a stated reason transfers to the cases you failed to think of —
+  and you will fail to think of most of them. Anthropic's
+  [teaching-why result](https://www.anthropic.com/research/teaching-claude-why) found that training
+  on *explanations of why* an action is right substantially outperformed training on examples of the
+  right action (22% → 15% misalignment from filtered examples; **3%** when the same data carried
+  explicit deliberation over the values at stake). Independently, their
+  [workspace research](https://transformer-circuits.pub/2026/workspace/index.html) observed that
+  "instructions to suppress a thought increase its occurrence relative to no instruction at all" and
+  that control is "imperfect and sensitive to phrasing" — so a bare prohibition is a weaker
+  instrument than a stated purpose plus the desired behavior. Both are findings about *training*, not
+  about instruction files, so treat the transfer as plausible rather than proven — but the cost of
+  adding one clause of rationale per rule is nearly zero, and the failure it guards against (brittle
+  compliance that collapses just outside the enumerated cases) is the expensive one.
+  See [docs/RESEARCH-NOTES.md](docs/RESEARCH-NOTES.md).
 - **Grounding.** Point at the real systems, prior incidents, and existing patterns the work should
   mirror. An agent starting from a blank page invents; an agent pointed at three working
   implementations copies. Copying is faster and more correct.
@@ -306,7 +323,13 @@ When reviewing a change (yours or another agent's), do all five:
    should get stronger or stay the same, never loosened to pass.
 3. **Rerun on your own machine.** Environment divergence — a missing tool, a stale build, an
    unmerged branch — has repeatedly surfaced real bugs that a same-machine rerun masked.
-4. **Probe one edge the author's tests did not.**
+4. **Probe one edge the author's tests did not — and make it structurally unlike theirs**, not just
+   one more case of the same shape. A suite written against the cases its author had in mind produces
+   compliance that is brittle just outside them: in Anthropic's
+   [teaching-why work](https://www.anthropic.com/research/teaching-claude-why) the most efficient
+   training data was structurally *unlike* the target evaluation (~28× more token-efficient), while
+   data closely matching the evaluation generalized poorly. Vary the *kind* of input, not the value:
+   a different call path, a different lifecycle stage, a different failure mode.
 5. **Do not defer to a claim.** A proposal, a status update, or another agent's "verified" is a
    hypothesis. Pull the actual code. A well-tested change in the wrong direction is still wrong.
 
@@ -382,11 +405,21 @@ instruction conflicts with another agent's claim, a document, or their own plan:
   possible intervention, and in practice it is how the biggest course changes happened.
 
 Balance this with judgment so it does not become reflexive: a human post does **not** automatically
-require stopping and asking. Interrupt your human for genuine complexity, one-way doors, matters of
-taste, changes to a working agreement, approval-gated changes, or cross-lane collisions. Handle the
-rest yourself. The bar is *what merits their attention*, not permission. (In the reference run an
-early agent tagged its human on **every** human post; the fix — a judgment-based escalation bar —
-was written into the rulebook by that human.)
+require stopping and asking. Interrupt your human for **a choice between viable approaches** (the
+single most common reason agents stop, at 35% of self-initiated stops), one-way doors, matters of
+taste, changes to a working agreement, approval-gated changes, missing credentials, or cross-lane
+collisions. Handle the rest yourself. The bar is *what merits their attention*, not permission. (In
+the reference run an early agent tagged its human on **every** human post; the fix — a
+judgment-based escalation bar — was written into the rulebook by that human.)
+
+**Do not mandate approval of every action.** Anthropic's
+[agent-autonomy analysis](https://www.anthropic.com/research/measuring-agent-autonomy) found that
+requiring approval for everything "will create friction without necessarily producing safety
+benefits"; the test that matters is whether a human is *positioned to monitor and intervene*. The
+same data shows experienced users approve *less* and interrupt *more* — oversight relocated, not
+reduced. Design for visibility and easy intervention rather than gates on every step. And expect a
+healthy loop to stop and ask on its own: on complex work, agents raise clarifying questions more
+than twice as often as humans interrupt them.
 
 ### 5. The mechanics that prevent collisions
 

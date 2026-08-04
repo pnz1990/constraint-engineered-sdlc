@@ -116,12 +116,19 @@ These exist because the easy stopping points are traps. Obey them literally.
 2. **A gate is green only with a proof artifact.** BUILD: a rerunnable script/test plus its output.
    DESIGN: a decision record with evidence. Prose without an artifact is not green.
 3. **Cheap exits are forbidden.** These do NOT satisfy the objective, and reaching for one is proof
-   you are in a lazy local optimum:
-   - <One component working while the others are only described.>
-   - <The happy path running while the isolation/failure gate is unproven.>
-   - "documented" standing in for a BUILD gate.
-   - Declaring a gate out of scope without an evidence-backed reason.
-   - Stopping at the first green subset.
+   you are in a lazy local optimum. **Each entry states WHY — an enumerated list covers only what it
+   enumerates, while a stated purpose transfers to the exits nobody thought to list. When you meet a
+   shortcut not on this list, reason from the purposes below rather than concluding it is permitted:**
+   - <One component working while the others are only described.> — *the model being proven depends
+     on all of them holding at once; one working component demonstrates nothing about the whole.*
+   - <The happy path running while the isolation/failure gate is unproven.> — *the happy path is the
+     case that was going to work anyway; the value of this project lives in the failure modes.*
+   - "documented" standing in for a BUILD gate. — *a description of a behavior is not evidence the
+     behavior occurs; only a run is.*
+   - Declaring a gate out of scope without an evidence-backed reason. — *convenience is
+     indistinguishable from impossibility unless you attempted it and wrote down what stopped you.*
+   - Stopping at the first green subset. — *the first green subset is where progress feels best and
+     is least informative; the unattacked remainder is where the defects are.*
 4. **Every iteration ends with a gap report.** List the gates not yet green and pick the next to
    attack. If any gate is red, you are not done.
 5. **Scope reductions must be earned, not assumed.** If you believe a gate cannot be built, first

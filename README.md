@@ -102,6 +102,7 @@ similar. For any other agent, paste `SKILL.md` into your system prompt or instru
 | Adding this to an `AGENTS.md` your team already has | [docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md](docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md) |
 | Wondering whether it worked | [docs/MEASUREMENT.md](docs/MEASUREMENT.md) |
 | Already using `prompt-to-goal` | [docs/COMPOSING.md](docs/COMPOSING.md) |
+| Checking what external research backs this | [docs/RESEARCH-NOTES.md](docs/RESEARCH-NOTES.md) — including what was read and **not** adopted |
 
 Templates you can copy directly:
 
