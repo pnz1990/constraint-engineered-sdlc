@@ -3,6 +3,11 @@
 > Template. Replace every `<...>`. Seed this file, then let agents append what they learn —
 > most of its eventual content should come from agents encoding their own session lessons.
 > If this file and a **human** instruction disagree, the human wins and this file gets updated.
+>
+> **Keep this file under ~200 lines.** Longer instruction files measurably reduce adherence to every
+> rule in them. Move procedural and conditional content to path-scoped rules or a skill; keep only
+> standing facts here. If you are merging this into an `AGENTS.md` that already exists, read
+> `docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md` first — appending wholesale is the common mistake.
 
 ## Orient before you touch anything
 
@@ -99,9 +104,13 @@ other = FAIL      measured, and wrong
 
 A cannot-run is never a pass and never a failure — one hides a gap, the other sends people chasing
 ghosts. Before trusting any check, ask: *if the thing I measure were absent, what would this report?*
-If the answer is "pass," the check scores on nothing and must be fixed.
+If the answer is "pass," the check scores on nothing and must be fixed: an absent precondition yields
+an empty read, which satisfies the assertion. Assert preconditions first and exit 3; add a positive
+control so a null result cannot be a broken query.
 
 Beware measuring an exit code through a pipe: `cmd | tail; echo $?` reports the exit code of `tail`.
+
+Enforcement: `<your gate runner>`; `<the test that guards the roll-up>`.
 
 ## Change flow
 

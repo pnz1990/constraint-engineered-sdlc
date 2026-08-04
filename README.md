@@ -99,6 +99,7 @@ similar. For any other agent, paste `SKILL.md` into your system prompt or instru
 |---|---|
 | Starting a new project | [docs/ONBOARDING.md](docs/ONBOARDING.md) — Path A |
 | Mid-flight and something's wrong | [docs/ONBOARDING.md](docs/ONBOARDING.md) — Path B (each step is independently useful, start with step 1) |
+| Adding this to an `AGENTS.md` your team already has | [docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md](docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md) |
 | Wondering whether it worked | [docs/MEASUREMENT.md](docs/MEASUREMENT.md) |
 | Already using `prompt-to-goal` | [docs/COMPOSING.md](docs/COMPOSING.md) |
 

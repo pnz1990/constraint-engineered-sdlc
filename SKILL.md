@@ -155,6 +155,17 @@ not drift. Include:
   about how a system behaves. Reasoning from memory about someone else's system is the most
   reliable source of confident wrong answers.
 
+**If the team already has an `AGENTS.md`** — most do — you are merging into a living document, not
+starting one. Do not append this method wholesale: root instruction files should stay **under ~200
+lines**, because longer files measurably reduce adherence to *every* rule in them, including the ones
+already working. Put only the non-negotiables in the root file (three-state exit contract,
+discrimination check, evidence tags, no-self-declared-done, the autonomy boundary), move harness and
+review detail to **path-scoped rules** that load only when matching files are touched, and keep the
+cycle loop in a skill. Where a rule already exists in weaker form, **strengthen it in place** rather
+than adding a parallel version — instruction files *concatenate* rather than override, so a
+contradiction does not resolve, it just sits there and the agent picks one arbitrarily. Full
+procedure: [docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md](docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md).
+
 ### 4. The evidence ladder
 
 Every material claim carries a tag. Untagged assertions get bounced in review.
