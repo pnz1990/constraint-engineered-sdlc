@@ -421,8 +421,10 @@ Treat a green harness as proving nothing on its own. The author can unintentiona
 that passes on both the broken and the fixed code.
 
 **Field note on the held-out set, since its magnitude was previously unmeasured.** In the reference run,
-auditing two author-graded gates against a second set built *after* the fact — cases structurally unlike
-the ones each gate was designed against — found **three real defects in two gates, with no false alarms**:
+every gate whose author also owned the graded subject was audited against a second set built *after* the
+fact — cases structurally unlike the ones each gate was designed against. Result: **6 real defects across
+5 gates, with no false alarms.** Every one was invisible to the set its own author had written.
+
 - A fork-provenance check flagged honest *denials* ("this file is NOT forked from upstream") as
   violations, punishing exactly the documentation the policy asked people to write.
 - An ownership-partition check compared paths as raw strings, so one pipeline owning `a/` while another
@@ -430,13 +432,33 @@ the ones each gate was designed against — found **three real defects in two ga
   ownership was the check's only reason to exist, and nested claims were the *realistic* failure mode.
 - A credential-surface check flagged `accredited-addons.yaml` because `cred` is a substring of
   `accredited`.
-Two patterns worth generalizing. First, the recurring shape is a **substring or exact-string match
-standing in for a structural relation** — a token inside a longer word, a path prefix, a negated clause.
-If a check answers a structural question with `in` or `==`, that is where to aim the held-out set.
-Second, and the reason the rule earns its cost: the held-out set caught that the *first fix attempt was
-dead code* — a word-boundary escape the target regex engine did not support, so the exclusion never
-matched and the check reported success. The designed-against set was perfectly happy with it. A one-set
-check would have shipped a no-op that looked like a fix.
+- **The citation checker — whose entire purpose was catching "a green row citing a deleted file" — matched
+  only four file extensions, so every `.md` citation was invisible to it.** Design-type gates cite
+  decision records as their *primary* artifact, so the one class it most needed to check was the class it
+  skipped. A green row had been citing a deleted decision record for weeks while the gate reported PASS.
+- A coverage gate asserted against a *hardcoded list* of the items it was supposed to check. The list had
+  already drifted (one item was never checked), and worse: rename the items and the assertion becomes
+  **vacuously true** — nothing reported a failure because nothing had that name any more.
+- A pin-freshness check compared a recorded commit to the remote by prefix, so an **empty** recorded value
+  prefix-matched every commit and reported "up to date" — the strongest available green, from nothing.
+
+Three patterns worth generalizing.
+
+1. **The recurring shape is a substring or exact-string match standing in for a structural relation** — a
+   token inside a longer word, a path prefix, a negated clause, a file extension standing in for "is this
+   a path?". All five gates had one. If a check answers a structural question with `in` or `==`, that is
+   where to aim the held-out set.
+2. **A checker that names the things it checks will drift from them.** Derive the list from the artifact
+   under test and refuse to score if the derivation comes back empty; a hardcoded list turns into a
+   vacuous pass exactly when the thing it names is renamed.
+3. **The reason the rule earns its cost:** the held-out set caught that a *first fix attempt was dead
+   code* — a word-boundary escape the target regex engine did not support, so the exclusion never matched
+   and the check reported success. The designed-against set was perfectly happy with it. A one-set check
+   would have shipped a no-op that looked like a fix.
+
+Note what this does **not** replace. A held-out set is still written by the gate's author, so it only
+covers failure modes that author can imagine. It is the cheap mitigation available immediately; the
+independent pass by a different agent remains the real one.
 
 ## Multi-agent coordination: agents as team members
 
@@ -619,6 +641,7 @@ Judge the method, not the vibe. See `docs/MEASUREMENT.md` for how to collect the
 - SKIP or cannot-run outcomes are being counted as passes.
 - The second pass is run by the author of the change.
 - A gate's only test cases are the ones its author thought of while writing it.
+- A check asserts against a hardcoded list of the things it is supposed to check.
 - `STATUS.md` disagrees with the artifacts it links to.
 - Ticks report "no unblocked work left" while unread sources, unbuilt harnesses, or undrafted diffs remain.
 
@@ -633,6 +656,7 @@ a new test must FAIL on the old code
 a proof artifact RE-EXECUTES; if it only counts, it is worse than nothing
 the second pass is a different agent, on its own checkout
 if you wrote the fix AND its scorer, add a set you did not tune against
+derive the list you check from the artifact; a hardcoded one drifts into a vacuous pass
 confidence drops the moment you find a crack
 a reversal that does not cascade is half done
 scope reductions are earned, not assumed
