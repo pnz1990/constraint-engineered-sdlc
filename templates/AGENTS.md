@@ -81,7 +81,7 @@ a deployed thing's state, go look at it.
 ## Review discipline
 
 A green harness proves nothing on its own — the author can unintentionally write a test that passes
-on both the broken and the fixed code. When you review, do all five:
+on both the broken and the fixed code. When you review, do all six:
 
 1. **Discrimination check (the one that matters most).** Run the new/edited test against the
    **pre-fix** code. It MUST fail there. If it passes on both, it is not testing the fix.
@@ -96,6 +96,12 @@ on both the broken and the fixed code. When you review, do all five:
    *hypothesis to verify*, not a fact. Pull the actual code. A well-tested change in the wrong
    direction is still wrong. If you cannot verify it, say so explicitly and treat it as unverified —
    never launder an unchecked claim into a "confirmed."
+6. **Ask who wrote the scorer.** If the same agent authored the change *and* the gate grading it, then
+   "raise the score" and "lower the bar" are the same action and the pass count cannot tell them apart.
+   Two fixes, not interchangeable: an independent pass by a different agent (the real one), and a
+   **held-out set the checker was not tuned against** (the cheap one, available now). Aim the held-out
+   set wherever a check answers a *structural* question with a substring or exact-string match — a token
+   inside a longer word, a path prefix, a negated clause.
 
 ## Harness honesty
 

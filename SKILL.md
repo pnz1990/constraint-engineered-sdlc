@@ -390,7 +390,7 @@ Any new crack resets the counter. One clean pass can be luck or a weak attack.
 quietly skipped, and skipping it is self-review with extra steps. If the author of a fix ran the
 confirming pass, the gate stays amber and the board should say why.
 
-When reviewing a change (yours or another agent's), do all five:
+When reviewing a change (yours or another agent's), do all six:
 
 1. **Discrimination check — the one that matters most.** Run the new test against the *pre-fix*
    code. It **must fail** there. If it passes on both the broken and fixed versions, it is not
@@ -408,9 +408,35 @@ When reviewing a change (yours or another agent's), do all five:
    a different call path, a different lifecycle stage, a different failure mode.
 5. **Do not defer to a claim.** A proposal, a status update, or another agent's "verified" is a
    hypothesis. Pull the actual code. A well-tested change in the wrong direction is still wrong.
+6. **Ask who wrote the scorer.** When the same agent authored both the change and the gate that grades
+   it — the common case here, since the method asks for a re-executing artifact alongside every fix —
+   "raise the score" and "lower the bar" are the same action, and the second is cheaper. Nothing in the
+   pass count distinguishes them. Two mechanisms recover the lost evidence, and they are not
+   interchangeable: an **independent pass by a different agent** (the real one), and a **held-out set
+   the checker was not tuned against** (the cheap one, available immediately). See
+   [`prompt-to-goal`](https://github.com/pnz1990/ai-epistemic-constraints) for the frozen-checker and
+   held-out-set rules in full.
 
 Treat a green harness as proving nothing on its own. The author can unintentionally write a test
 that passes on both the broken and the fixed code.
+
+**Field note on the held-out set, since its magnitude was previously unmeasured.** In the reference run,
+auditing two author-graded gates against a second set built *after* the fact — cases structurally unlike
+the ones each gate was designed against — found **three real defects in two gates, with no false alarms**:
+- A fork-provenance check flagged honest *denials* ("this file is NOT forked from upstream") as
+  violations, punishing exactly the documentation the policy asked people to write.
+- An ownership-partition check compared paths as raw strings, so one pipeline owning `a/` while another
+  owned `a/b/` reported "disjoint" — while every file under `a/b/` was claimed by both. Unambiguous
+  ownership was the check's only reason to exist, and nested claims were the *realistic* failure mode.
+- A credential-surface check flagged `accredited-addons.yaml` because `cred` is a substring of
+  `accredited`.
+Two patterns worth generalizing. First, the recurring shape is a **substring or exact-string match
+standing in for a structural relation** — a token inside a longer word, a path prefix, a negated clause.
+If a check answers a structural question with `in` or `==`, that is where to aim the held-out set.
+Second, and the reason the rule earns its cost: the held-out set caught that the *first fix attempt was
+dead code* — a word-boundary escape the target regex engine did not support, so the exclusion never
+matched and the check reported success. The designed-against set was perfectly happy with it. A one-set
+check would have shipped a no-op that looked like a fix.
 
 ## Multi-agent coordination: agents as team members
 
@@ -592,6 +618,7 @@ Judge the method, not the vibe. See `docs/MEASUREMENT.md` for how to collect the
 - The reversal ledger is empty while gates sit at `assumed`.
 - SKIP or cannot-run outcomes are being counted as passes.
 - The second pass is run by the author of the change.
+- A gate's only test cases are the ones its author thought of while writing it.
 - `STATUS.md` disagrees with the artifacts it links to.
 - Ticks report "no unblocked work left" while unread sources, unbuilt harnesses, or undrafted diffs remain.
 
@@ -605,6 +632,7 @@ check both directions of the exit contract on the entry point first
 a new test must FAIL on the old code
 a proof artifact RE-EXECUTES; if it only counts, it is worse than nothing
 the second pass is a different agent, on its own checkout
+if you wrote the fix AND its scorer, add a set you did not tune against
 confidence drops the moment you find a crack
 a reversal that does not cascade is half done
 scope reductions are earned, not assumed
