@@ -36,8 +36,23 @@ Examples of the same bug wearing different clothes:
 - A test whose fixture describes a state that cannot occur in production.
 - A version bump that resolves to the identical artifact, so nothing changed.
 
+**This failure has a mirror, and the mirror is more dangerous socially: a cannot-run rendered as a
+FAIL.** Same missing third state, opposite blast radius. When a precondition is absent, a harness that
+scores it PASS inflates *your* confidence — but a harness that scores it FAIL tells *everyone else* the
+system is broken. Watch for it especially on the one command that others run to participate — the
+documented entry point, the "how to reproduce" script, the reviewer's first step. If that command
+FAILs whenever a precondition it doesn't actually need is missing (a credential, a live backend, a
+cluster), every reviewer who lacks that precondition reads "broken, not my problem" and leaves. A green
+that scores on nothing fools one person; a FAIL that scores on nothing silently shrinks the pool of
+people who could have caught the green. So check **both** directions of the three-state contract, and
+check them on the entry point first: with each precondition absent in turn, does the runner PASS
+(scores on nothing), FAIL (repels the reviewers you need), or refuse to score (correct)? A gate that
+sits unreviewed for a suspiciously long time is often not waiting on volunteers — its entry point is
+turning them away.
+
 Every mechanism below is aimed at this. If you keep only one thing from this skill, keep
-**cannot-run is a third outcome, never a pass** and **a new test must fail on the old code.**
+**cannot-run is a third outcome — never a pass, and never a failure** and **a new test must fail on the
+old code.**
 
 ## Two scopes, two skills
 
@@ -574,7 +589,8 @@ Judge the method, not the vibe. See `docs/MEASUREMENT.md` for how to collect the
 Print this and stick it on the wall:
 
 ```
-cannot-run is a third outcome, never a pass
+cannot-run is a third outcome — never a pass (fools you), never a FAIL (repels reviewers)
+check both directions of the exit contract on the entry point first
 a new test must FAIL on the old code
 a proof artifact RE-EXECUTES; if it only counts, it is worse than nothing
 the second pass is a different agent, on its own checkout

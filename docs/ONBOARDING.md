@@ -204,7 +204,11 @@ and each one is cheap.
 
 Audit your test and check harnesses for the pass-on-nothing shape. For every check, ask: *if the
 thing I measure were absent, what would this report?* If the answer is "pass," you have a check that
-scores on nothing.
+scores on nothing. Ask the same question expecting the *other* wrong answer too: if the answer is
+"fail," you have the mirror bug — a cannot-run rendered as a failure. Audit your **entry point**
+(the documented one-command reproduce/regression script) for this one first: if it aborts whenever a
+precondition it doesn't strictly need is missing, every reviewer who lacks that precondition is turned
+away at the door, and a gate can sit unreviewed for weeks while you assume nobody volunteered.
 
 Introduce a third outcome and make the runner distinguish it:
 
@@ -215,7 +219,8 @@ other = FAIL      the thing was measured and is wrong
 ```
 
 Then make the summary report all three separately. A SKIP must never read as a pass, and a
-cannot-run must never read as a failure — one hides a gap, the other sends people chasing ghosts.
+cannot-run must never read as a failure — one hides a gap, the other sends people chasing ghosts (and
+drives away the reviewers who would have caught the gap).
 
 **Step 2 — Adopt the discrimination check (~1 hour).**
 
