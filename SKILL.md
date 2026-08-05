@@ -287,6 +287,26 @@ The tick prompt that worked:
   decision. In the reference run the pattern was explicit and productive: *"the 3 human-gated
   decisions are still open, so I worked the gaps that don't need a human."* Instruct the agent to
   fall through to unblocked work rather than waiting.
+- **A blocker is a claim, so it needs the same evidence tag as any other.** This is the loop's
+  characteristic failure and it is worse than idling: an agent that *reports* a blocker stops work,
+  tells the channel someone else is the constraint, and looks diligent while doing it. In the
+  reference run one agent reported four blockers that did not exist — an auto-merge tool that "hangs"
+  (it was a local permission prompt), a review approval requirement that was not active on the
+  package, and twice a teammate's expired credential that was not the credential in use. Each cost a
+  cycle, and one did real damage: forcing the issue by adding a required reviewer *created* the block
+  it was meant to route around. Require an agent to establish a blocker at `code-verified` or
+  `demonstrated` before announcing it:
+  - **Read the machine's answer, not the plausible story.** Query the actual API/permission state
+    rather than a months-old decision record or a remembered rule.
+  - **Distinguish "my sandbox refused" from "the system rejected."** A denial by your own harness,
+    permission prompt, or missing tool is *your* limitation, and saying "blocked" broadcasts it as
+    everyone's.
+  - **Check whether the blocked party is actually blocked.** If you claim a teammate cannot act, find
+    evidence they have not acted — the commit log after the alleged expiry answers this in one command.
+  - **Name the binding constraint, not the first plausible one.** When several could explain the
+    stall, the one you have evidence for is the only one you report.
+  A wrongly-reported blocker is a *reversal* and belongs in the ledger like any other overturned
+  belief. Its cascade question is the valuable one: what work did I decline to do while I believed it?
 - **A visible tick log.** Posts prefixed "Loop tick —" make the run auditable and let a human drop in
   at any point and see what happened while they were away.
 

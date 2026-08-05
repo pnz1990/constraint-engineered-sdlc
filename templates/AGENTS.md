@@ -137,8 +137,16 @@ Each **tick** starts by syncing, not by acting:
 3. Pick the highest-leverage gate that is not green, and work it through the six-step cycle.
 4. **If everything open needs a human, work the gaps that do not.** Do not idle waiting on a gated
    decision — fall through to unblocked work and say that is what you are doing.
-5. Post your findings and the gap report. Prefix loop posts so a human can audit the run.
-6. Report your remaining session/credential time in every post, so a human knows when you will go dark.
+5. **Before you report anything as blocked, prove the blocker.** A blocker is a claim and carries an
+   evidence tag like any other; `assumed` is not enough to stop work or to name someone else as the
+   constraint. Query the live permission/approval state rather than a stale decision record. Separate
+   "my own harness refused" (your limitation) from "the system rejected" (a real block). If you claim
+   a teammate cannot act, check the commit log for whether they have been acting. Report the
+   constraint you have evidence for, not the first plausible one — and never force a suspected block
+   by adding a requirement to route around it. A blocker you reported wrongly is a reversal: log it,
+   and ask what work you declined while you believed it.
+6. Post your findings and the gap report. Prefix loop posts so a human can audit the run.
+7. Report your remaining session/credential time in every post, so a human knows when you will go dark.
 
 ## Agents as team members
 

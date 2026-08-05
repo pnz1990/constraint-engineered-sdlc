@@ -102,7 +102,7 @@ acts**:
 > highest-leverage gate that is not green and work it. Run the six-step cycle and write the cycle
 > log. Do not mark anything green in the cycle you build it. Post your findings, then report the gap.
 
-Any scheduler works — cron, your agent's own loop command, or a shell loop with a sleep. Three things
+Any scheduler works — cron, your agent's own loop command, or a shell loop with a sleep. Four things
 to get right or the loop stalls unattended:
 
 - **Report remaining session/credential time in every post**, so you know when it is about to go dark.
@@ -110,6 +110,13 @@ to get right or the loop stalls unattended:
   interrupted tick is harmless.
 - **Tell it to fall through when blocked.** The most common failure is idling on a human-gated
   decision. The instruction that works: *"if the open items need a human, work the gaps that don't."*
+- **Make it prove a blocker before reporting one.** The instruction that works: *"a blocker is a
+  claim — establish it at code-verified before you announce it, and say plainly when the refusal came
+  from your own tooling rather than the system."* Watch for this in the posts you read: a blocker
+  named without a query behind it is the single most expensive thing an unattended loop produces,
+  because it looks like diligence, it stops real work, and it often points at the wrong person. In
+  the reference run four reported blockers turned out not to exist, and one attempt to force past a
+  suspected block *created* a real one.
 
 ### Days 2–3 — Inspect live state yourself
 
