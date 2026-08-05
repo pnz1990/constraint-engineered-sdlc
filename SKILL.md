@@ -186,7 +186,20 @@ lines**, because longer files measurably reduce adherence to *every* rule in the
 already working. Put only the non-negotiables in the root file (three-state exit contract,
 discrimination check, evidence tags, no-self-declared-done, the autonomy boundary), move harness and
 review detail to **path-scoped rules** that load only when matching files are touched, and keep the
-cycle loop in a skill. Where a rule already exists in weaker form, **strengthen it in place** rather
+cycle loop in a skill.
+
+> **The one class that earns space over the 200-line target: a live multi-agent coordination
+> protocol.** When several agents share one codebase, the claim/land/emoji/escalation rules are the
+> swarm's single point of reconstruction — they must load *every* session for *every* agent, and they
+> cannot be path-scoped (a collision is not tied to a file pattern) or deferred to a skill (a skill
+> loads on demand, after the agent has already decided to act). So a coordinating repo's root file
+> will run longer than a solo one, and that is correct, not debt. Keep the *procedural* detail (CR
+> how-to, build commands) out — that is what path-scoped rules and skills are for — but the standing
+> coordination contract stays in the root. Found by dogfooding: this method's own reference project
+> ran its root file to ~390 lines, and the bulk that could not move was exactly the coordination
+> protocol. Trim everything else hard; do not trim the thing that stops two agents colliding.
+
+Where a rule already exists in weaker form, **strengthen it in place** rather
 than adding a parallel version — instruction files *concatenate* rather than override, so a
 contradiction does not resolve, it just sits there and the agent picks one arbitrarily. Full
 procedure: [docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md](docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md).

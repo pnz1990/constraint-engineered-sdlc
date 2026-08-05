@@ -4,7 +4,10 @@
 > most of its eventual content should come from agents encoding their own session lessons.
 > If this file and a **human** instruction disagree, the human wins and this file gets updated.
 >
-> **Keep this file under ~200 lines.** Longer instruction files measurably reduce adherence to every
+> **Keep this file under ~200 lines** — with one principled exception: a live multi-agent
+> coordination protocol (claim/land/marker/escalation) must load every session and cannot be
+> path-scoped, so a coordinating repo's root file legitimately runs longer. Trim everything else hard.
+> Otherwise, longer instruction files measurably reduce adherence to every
 > rule in them. Move procedural and conditional content to path-scoped rules or a skill; keep only
 > standing facts here. If you are merging this into an `AGENTS.md` that already exists, read
 > `docs/ADOPTING-INTO-EXISTING-AGENTS-MD.md` first — appending wholesale is the common mistake.

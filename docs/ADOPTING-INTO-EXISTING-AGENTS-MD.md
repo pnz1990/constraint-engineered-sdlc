@@ -26,7 +26,11 @@ and the agent may pick either one arbitrarily.** Contradiction is the failure mo
 
 **3. Size degrades adherence.** Target **under 200 lines** per file. Longer files consume more
 context and are followed less reliably. This is the single hardest constraint on "just append our
-rules," and it is why the layering below matters.
+rules," and it is why the layering below matters. *One principled exception:* a live **multi-agent
+coordination protocol** (claim/land/marker/escalation rules) must load every session for every agent
+and cannot be path-scoped or deferred to a skill, so a coordinating repo's root file legitimately runs
+longer. Trim everything else hard; keep the coordination contract. (This method's own reference repo
+ran to ~390 lines for exactly this reason — the irreducible remainder was the protocol.)
 
 **4. Imports exist, but do not save context.** `@path/to/file` expands at launch — good for
 organization, useless for size. Import parsing skips code spans, so `` `@thing` `` in backticks stays
@@ -191,7 +195,7 @@ stale. Keep the file for pitfalls, rationale, and conventions that differ from t
 [ ] Every intended rule classified: covered / weaker / absent / contradicted
 [ ] "Weaker" ones strengthened IN PLACE, not duplicated elsewhere
 [ ] Contradictions raised with a human, not overwritten
-[ ] Root file still under ~200 lines after the change
+[ ] Root file under ~200 lines — OR longer only because a multi-agent coordination protocol must load every session (the one principled exception)
 [ ] Procedural and conditional content moved to path-scoped rules or a skill
 [ ] House style matched: imperative, graded strength, numeric thresholds
 [ ] Every rule names its enforcement path, or admits it has none
