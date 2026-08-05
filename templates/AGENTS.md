@@ -139,7 +139,12 @@ Each **tick** starts by syncing, not by acting:
    decision — fall through to unblocked work and say that is what you are doing.
 5. **Before you report anything as blocked, prove the blocker.** A blocker is a claim and carries an
    evidence tag like any other; `assumed` is not enough to stop work or to name someone else as the
-   constraint. Query the live permission/approval state rather than a stale decision record. Separate
+   constraint. Cheapest first check: **attempt the action once as a single bare command and read what
+   comes back** — a compound or piped invocation can trip your own tooling and look exactly like a
+   server rejection. When you do refute a blocker, record the *working invocation*, because a blocker
+   you disproved once will come back in a new costume otherwise: the same block with a different
+   command shape reads as a new one. Query the live permission/approval state rather than a stale
+   decision record. Separate
    "my own harness refused" (your limitation) from "the system rejected" (a real block). If you claim
    a teammate cannot act, check the commit log for whether they have been acting. Report the
    constraint you have evidence for, not the first plausible one — and never force a suspected block

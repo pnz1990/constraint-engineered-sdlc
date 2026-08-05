@@ -295,7 +295,17 @@ The tick prompt that worked:
   package, and twice a teammate's expired credential that was not the credential in use. Each cost a
   cycle, and one did real damage: forcing the issue by adding a required reviewer *created* the block
   it was meant to route around. Require an agent to establish a blocker at `code-verified` or
-  `demonstrated` before announcing it:
+  `demonstrated` before announcing it — and give it a front door cheaper than an investigation:
+  **attempt the action once, as a single bare command, and read what comes back.** Most reported
+  blockers die there. In the reference run the same agent hit a fifth instance within an hour of
+  landing this very rule: it reported two commits stuck because "my harness is declining the push,"
+  when the invocation shape was the entire problem — a compound `cd <dir> && git push` tripped a local
+  permission prompt, while the direct `git -C <path> push` form went straight through, first try.
+  - **A blocker you have disproved once does not get to return in a new costume.** That fifth instance
+    was the *same* block the agent had already refuted and written into its own ledger earlier in the
+    session; it recurred because the command *form* differed, so it was not recognized as the same
+    thing. When you refute a blocker, record the working invocation, not just the conclusion — a
+    principle someone has read is weaker than a command someone runs.
   - **Read the machine's answer, not the plausible story.** Query the actual API/permission state
     rather than a months-old decision record or a remembered rule.
   - **Distinguish "my sandbox refused" from "the system rejected."** A denial by your own harness,

@@ -111,12 +111,15 @@ to get right or the loop stalls unattended:
 - **Tell it to fall through when blocked.** The most common failure is idling on a human-gated
   decision. The instruction that works: *"if the open items need a human, work the gaps that don't."*
 - **Make it prove a blocker before reporting one.** The instruction that works: *"a blocker is a
-  claim — establish it at code-verified before you announce it, and say plainly when the refusal came
-  from your own tooling rather than the system."* Watch for this in the posts you read: a blocker
-  named without a query behind it is the single most expensive thing an unattended loop produces,
-  because it looks like diligence, it stops real work, and it often points at the wrong person. In
-  the reference run four reported blockers turned out not to exist, and one attempt to force past a
-  suspected block *created* a real one.
+  claim — establish it at code-verified before you announce it, try the action once as a single bare
+  command first, and say plainly when the refusal came from your own tooling rather than the system."*
+  Watch for this in the posts you read: a blocker named without a query behind it is the single most
+  expensive thing an unattended loop produces, because it looks like diligence, it stops real work,
+  and it often points at the wrong person. In the reference run five reported blockers turned out not
+  to exist; one attempt to force past a suspected block *created* a real one; and the fifth arrived
+  within an hour of the agent writing this rule for itself, because the same block wearing a different
+  command shape did not register as the same block. Treat a retraction as the healthy outcome, and ask
+  for the working invocation to be written down rather than just the conclusion.
 
 ### Days 2–3 — Inspect live state yourself
 
