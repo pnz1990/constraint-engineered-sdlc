@@ -298,10 +298,20 @@ The tick prompt that worked:
   agent report remaining session time in every post so a human knows when it is about to go dark.
 - **Idempotent ticks.** A tick may land mid-anything. Re-reading state at the start (rather than
   trusting in-memory context) is what makes an interrupted tick harmless.
-- **Something to do when blocked.** The most common failure is an agent idling on a human-gated
-  decision. In the reference run the pattern was explicit and productive: *"the 3 human-gated
-  decisions are still open, so I worked the gaps that don't need a human."* Instruct the agent to
-  fall through to unblocked work rather than waiting.
+- **Something to do when blocked — and a closed list of what "blocked" means.** The most common
+  failure is an agent idling on a human-gated decision. Stating "fall through to unblocked work" is
+  not enough: an agent that has decided no unblocked work exists will idle while quoting that rule.
+  State it as a property instead. **A tick has no power the current turn lacks.** Anything the next
+  tick could do, do now; "wait for the next tick" is never a plan. A tick that produces no new work
+  is valid **only** if it names a specific blocker of one of three kinds: `auth` (a credential the
+  agent cannot itself obtain), `other-actor` (a decision genuinely a human's or another agent's), or
+  `done` (the gate is green under a re-executing exit). Anything else — "value per tick is low",
+  "nothing new to add", "holding for a reply" — is a **defect**, logged in the reversal ledger. Two
+  clauses make it bite: **a blocker excuses only the lane it blocks** (the observed failure was
+  naming one real blocker and using it to stop every lane), and **low value-per-tick means escalate,
+  not stop** — climb read → build-in-isolation → propose-fix → verify. Make it checkable: classify
+  each tick DID-WORK | IDLE-VALID | IDLE-DEFECT from its own log, seeded with ticks known to be
+  defects — if it does not convict those, it measures nothing.
 - **A blocker is a claim, so it needs the same evidence tag as any other.** This is the loop's
   characteristic failure and it is worse than idling: an agent that *reports* a blocker stops work,
   tells the channel someone else is the constraint, and looks diligent while doing it. In the
@@ -583,6 +593,7 @@ Judge the method, not the vibe. See `docs/MEASUREMENT.md` for how to collect the
 - SKIP or cannot-run outcomes are being counted as passes.
 - The second pass is run by the author of the change.
 - `STATUS.md` disagrees with the artifacts it links to.
+- Ticks report "no unblocked work left" while unread sources, unbuilt harnesses, or undrafted diffs remain.
 
 ## Quick reference
 
@@ -598,6 +609,7 @@ confidence drops the moment you find a crack
 a reversal that does not cascade is half done
 scope reductions are earned, not assumed
 the gate list is an output of the run, not just an input
+a tick has no power this turn lacks — "wait for the next tick" is never a plan
 /goal every tick, not once at kickoff — /loop keeps the pressure on
 🤖 marks an agent, 🤵 marks a human; NEITHER marker = unknown, ask (never assume human)
 humans outrank agents, always
