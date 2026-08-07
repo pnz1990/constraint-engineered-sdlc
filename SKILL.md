@@ -427,11 +427,11 @@ fact — cases structurally unlike the ones each gate was designed against. Resu
 
 - A fork-provenance check flagged honest *denials* ("this file is NOT forked from upstream") as
   violations, punishing exactly the documentation the policy asked people to write.
-- An ownership-partition check compared paths as raw strings, so one pipeline owning `a/` while another
-  owned `a/b/` reported "disjoint" — while every file under `a/b/` was claimed by both. Unambiguous
-  ownership was the check's only reason to exist, and nested claims were the *realistic* failure mode.
-- A credential-surface check flagged `accredited-addons.yaml` because `cred` is a substring of
-  `accredited`.
+- One ownership-partition check carried **two** distinct defects (this is why the count is 6 defects
+  over 5 gates): it compared paths as raw strings, so one pipeline owning `a/` while another owned
+  `a/b/` reported "disjoint" while every file under `a/b/` was claimed by both — nested claims were the
+  *realistic* failure mode and the check's whole reason to exist; and its credential-surface sub-check
+  flagged `accredited-addons.yaml` because `cred` is a substring of `accredited`.
 - **The citation checker — whose entire purpose was catching "a green row citing a deleted file" — matched
   only four file extensions, so every `.md` citation was invisible to it.** Design-type gates cite
   decision records as their *primary* artifact, so the one class it most needed to check was the class it
